@@ -1,0 +1,92 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<main id="content" role="main">
+  <!-- breadcrumb -->
+  <div class="bg-gray-13 bg-md-transparent">
+      <div class="container">
+          <!-- breadcrumb -->
+          <div class="my-md-3">
+              <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble">
+                      <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a
+                              href="{% url 'store:home' %}">Home</a></li>
+                      <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1 active" aria-current="page">My
+                          Account</li>
+                  </ol>
+              </nav>
+          </div>
+          <!-- End breadcrumb -->
+      </div>
+  </div>
+  <!-- End breadcrumb -->
+
+  <div class="container">
+      <div class="mb-4">
+          <h1 class="text-center">{% trans "Sign In" %}</h1>
+      </div>
+      <div class="my-4 my-xl-8">
+          <div class="row">
+              <div class="col-md-6 m-auto">
+                  <!-- Title -->
+                  <div class="border-bottom border-color-1 mb-6">
+                      <h3 class="d-inline-block section-title mb-0 pb-2 font-size-26">Login</h3>
+                  </div>
+                  <p class="text-gray-90 mb-4">Welcome back! Sign in to your account.</p>
+                  <!-- End Title -->
+                  <form class="js-validate" novalidate="novalidate" method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    {% if redirect_field_value %}
+                      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                      <!-- Form Group -->
+                      {{form.errors}}
+                      <div class="js-form-message form-group">
+                          <label class="form-label" for="signinSrEmailExample3">Username or Email address
+                              <span class="text-danger">*</span>
+                          </label>
+                          <input type="email" class="form-control" name="login" id="signinSrEmailExample3"
+                              placeholder="Username or Email address" aria-label="Username or Email address"
+                              required data-msg="Please enter a valid email address."
+                              data-error-class="u-has-error" data-success-class="u-has-success">
+                             
+                      </div>
+                      <!-- End Form Group -->
+
+                      <!-- Form Group -->
+                      <div class="js-form-message form-group">
+                          <label class="form-label" for="signinSrPasswordExample2">Password <span
+                                  class="text-danger">*</span></label>
+                          <input type="password" class="form-control" name="password"
+                              id="signinSrPasswordExample2" placeholder="Password" aria-label="Password" required
+                              data-msg="Your password is invalid. Please try again."
+                              data-error-class="u-has-error" data-success-class="u-has-success">
+                            
+                      </div>
+                      <!-- End Form Group -->
+
+                      <!-- Button -->
+                      <div class="mb-1">
+                          <div class="mb-3">
+                              <button type="submit" class="btn btn-primary-dark-w px-5">Login</button>
+                          </div>
+                          <div class="mb-2">
+                              <a class="text-blue" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+                          </div>
+                          <p>{% blocktrans %}If you have not created an account yet, then please
+                            <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+                      </div>
+                      <!-- End Button -->
+                  </form>
+              </div>
+        
+          </div>
+      </div>
+  </div>
+</main>
+
+{% endblock %}

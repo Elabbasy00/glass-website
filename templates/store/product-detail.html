@@ -1,0 +1,516 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head_title %}
+    {{product.title}}
+{% endblock %}
+
+
+{% block content %}
+<main id="content" role="main">
+    <!-- breadcrumb -->
+    <div class="bg-gray-13 bg-md-transparent">
+        <div class="container">
+            <!-- breadcrumb -->
+            <div class="my-md-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble">
+                        <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a href="{% url 'store:home' %}">Home</a></li>
+                        <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a href="{% url 'store:shop' %}">Shop</a></li>
+                        <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a href="{% url 'store:shop' %}?category={{product.category.slug}}">{{product.category.name}}</a></li>
+                        <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1 active" aria-current="page">{{product.title}}</li>
+                    </ol>
+                </nav>
+            </div>
+            <!-- End breadcrumb -->
+        </div>
+    </div>
+    <!-- End breadcrumb -->
+    <div class="container">
+        <!-- Single Product Body -->
+        <div class="mb-xl-14 mb-6">
+            <div class="row">
+                <div class="col-md-5 mb-4 mb-md-0">
+                    <div id="sliderSyncingNav" class="js-slick-carousel u-slick mb-2"
+                        data-infinite="true"
+                        data-arrows-classes="d-none d-lg-inline-block u-slick__arrow-classic u-slick__arrow-centered--y rounded-circle"
+                        data-arrow-left-classes="fas fa-arrow-left u-slick__arrow-classic-inner u-slick__arrow-classic-inner--left ml-lg-2 ml-xl-4"
+                        data-arrow-right-classes="fas fa-arrow-right u-slick__arrow-classic-inner u-slick__arrow-classic-inner--right mr-lg-2 mr-xl-4"
+                        data-nav-for="#sliderSyncingThumb">
+                        {% for image in product.product_images.all %}
+                            <div class="js-slide">
+                                <img class="img-fluid" src="{{image.image.url}}" alt="{{product.title}}">
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div id="sliderSyncingThumb" class="js-slick-carousel u-slick u-slick--slider-syncing u-slick--slider-syncing-size u-slick--gutters-1 u-slick--transform-off"
+                        data-infinite="true"
+                        data-slides-show="5"
+                        data-is-thumbs="true"
+                        data-nav-for="#sliderSyncingNav">
+                        {% for image in product.product_images.all %}
+                            <div class="js-slide" style="cursor: pointer;">
+                                <img class="img-fluid" src="{{image.image.url}}" alt="{{product.title}}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-7 mb-md-6 mb-lg-0">
+                    <form id="form">
+                        <div class="mb-2">
+                            <div class="border-bottom mb-3 pb-md-1 pb-3">
+                                <a href="{% url 'store:shop' %}?category={{product.category.slug}}" class="font-size-12 text-gray-5 mb-2 d-inline-block">{{product.category.name}}</a>
+                                <h2 class="font-size-25 text-lh-1dot2">{{product.title}}</h2>
+                                <div class="mb-2">
+                                    {% comment %} <a class="d-inline-flex align-items-center small font-size-15 text-lh-1" href="#">
+                                        <div class="text-warning mr-2">
+                                            <small class="fas fa-star"></small>
+                                            <small class="fas fa-star"></small>
+                                            <small class="fas fa-star"></small>
+                                            <small class="fas fa-star"></small>
+                                            <small class="far fa-star text-muted"></small>
+                                        </div>
+                                        <span class="text-secondary font-size-13">(3 customer reviews)</span>
+                                    </a> {% endcomment %}
+                                </div>
+                                <div class="d-md-flex flex flex-column" >
+                                   
+                                    <div class=" text-gray-9 font-size-14">
+                                        Availability: {% if product.in_stock %} <span class="text-green font-weight-bold">in stock</span> {% else %} <span class="text-red font-weight-bold">Out of stock</span> {% endif %}
+                                    </div>
+                                    <div id="availability">
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="flex-horizontal-center flex-wrap mb-4">
+                                <a href="#" class="text-gray-6 font-size-13 mr-2"><i class="ec ec-favorites mr-1 font-size-15"></i> Wishlist</a>
+                            </div>
+                        
+                            <p>{{product.small_description}}</p>
+                            <p><strong>SKU</strong>: {{product.sku}}</p>
+                            <div class="mb-4">
+                                <div class="d-flex align-items-baseline">
+                                    {% if product.discount_price %}
+                                        <ins class="font-size-36 text-decoration-none">${{product.discount_price}}</ins>
+                                        <del class="font-size-20 ml-2 text-gray-6">${{product.price}}</del>
+                                    {% else %}
+                                        <ins class="font-size-36 text-decoration-none">${{product.price}}</ins>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="border-top border-bottom py-3 mb-4">
+                                <div class="container">
+                                    <div class="row justify-content-start">
+                                        {% for variation in product.product_variation.all %}
+                                            <div class='col-12'>
+                                                <h6 class="font-size-16 font-weight-bold">{{variation.name}}:</h6>
+                                            </div>
+                                            {% if variation.type == 'SELECT' %}
+                                                <div class='col-12'>
+                                                    <!-- Select -->
+                                                    <select name="{{variation.name}}" class="js-select selectpicker dropdown-select"
+                                                        data-style="btn-sm bg-white font-weight-normal py-2 border">
+                                                        {% for choices in variation.product_variation_info.all %}
+                                                            <option  name="{{variation.name}}" value="{{choices.value}}" {% if choices.available_quantity <= 0 %} disabled  {% else %} active {% endif %} >{{choices.value}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <!-- End Select -->
+                                               </div>
+                                            {% elif variation.type == 'RADIO' %}
+                                                <div class='col-12'>
+                                                    <div class="btn-group btn-group-toggle radio_choices row ml-1 mb-2" data-toggle="buttons">    
+                                                        {% for choices in variation.product_variation_info.all %}
+                                                            <label class="btn btn-outline-dark col-md-2 col-sm-3 col-5 mr-2 mb-1 {% if choices.available_quantity <= 0 %} disabled  {% else %} active {% endif %} ">
+                                                                <input class="{% if choices.available_quantity <= 0 %} disabled {% endif %} " type="radio" name="{{variation.name}}" id="{{choices.value}}" value="{{choices.value}}" autocomplete="off" > {{choices.value}}
+                                                            </label>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                     
+                                        
+                                       
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-md-flex align-items-end mb-3">
+                                <div class="max-width-150 mb-4 mb-md-0">
+                                    <h6 class="font-size-14">Quantity</h6>
+                                    <!-- Quantity -->
+                                    <div class="border rounded-pill py-2 px-3 border-color-1">
+                                        <div class="js-quantity row align-items-center">
+                                            <div class="col">
+                                                <input id="product_qty" class="js-result form-control h-auto border-0 rounded p-0 shadow-none" type="number" max=  value="1">
+                                            </div>
+                                            <div class="col-auto pr-1">
+                                                <a class="js-minus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+                                                    <small class="fas fa-minus btn-icon__inner"></small>
+                                                </a>
+                                                <a class="js-plus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+                                                    <small class="fas fa-plus btn-icon__inner"></small>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Quantity -->
+                                </div>
+                                <div class="ml-md-3">
+                                    <button id='add_to_cart' type="submit" class="btn px-5 btn-primary-dark transition-3d-hover">
+                                       <i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End Single Product Body -->
+        
+        <!-- Single Product Tab -->
+        <div class="mb-8">
+            <div class="position-relative position-md-static px-md-6">
+                <ul class="nav nav-classic nav-tab nav-tab-lg justify-content-xl-center flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble border-0 pb-1 pb-xl-0 mb-n1 mb-xl-0" id="pills-tab-8" role="tablist">
+             
+                    <li class="nav-item flex-shrink-0 flex-xl-shrink-1 z-index-2">
+                        <a class="nav-link active" id="Jpills-two-example1-tab" data-toggle="pill" href="#Jpills-two-example1" role="tab" aria-controls="Jpills-two-example1" aria-selected="false">Description</a>
+                    </li>
+                    <li class="nav-item flex-shrink-0 flex-xl-shrink-1 z-index-2">
+                        <a class="nav-link" id="Jpills-three-example1-tab" data-toggle="pill" href="#Jpills-three-example1" role="tab" aria-controls="Jpills-three-example1" aria-selected="false">Specification</a>
+                    </li>
+                
+                </ul>
+            </div>
+            <!-- Tab Content -->
+            <div class="borders-radius-17 border p-4 mt-4 mt-md-0 px-lg-10 py-lg-9">
+                <div class="tab-content" id="Jpills-tabContent">
+                
+                    <div class="tab-pane fade active show" id="Jpills-two-example1" role="tabpanel" aria-labelledby="Jpills-two-example1-tab">
+                        <h3 class="font-size-24 mb-3">Perfectly Done</h3>
+                        <p>Praesent ornare, ex a interdum consectetur, lectus diam sodales elit, vitae egestas est enim ornare nisl. Nullam in lectus nec sem semper viverra. In lobortis egestas massa. Nam nec massa nisi. Suspendisse potenti. Quisque suscipit vulputate dui quis volutpat. Ut id elit facilisis, feugiat est in, tempus lacus. Ut ultrices dictum metus, a ultricies ex vulputate ac. Ut id cursus tellus, non tempor quam. Morbi porta diam nisi, id finibus nunc tincidunt eu.</p>
+                 
+                    </div>
+                    <div class="tab-pane fade" id="Jpills-three-example1" role="tabpanel" aria-labelledby="Jpills-three-example1-tab">
+                        <div class="mx-md-5 pt-1">
+                            <div class="table-responsive mb-4">
+                                <table class="table table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <th class="px-4 px-xl-5 border-top-0">Weight</th>
+                                            <td class="border-top-0">7.25kg</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Dimensions</th>
+                                            <td>90 x 60 x 90 cm</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Size</th>
+                                            <td>One Size Fits all</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">color</th>
+                                            <td>Black with Red, White with Gold</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Guarantee</th>
+                                            <td>5 years</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <h3 class="font-size-18 mb-4">Technical Specifications</h3>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <th class="px-4 px-xl-5 border-top-0">Brand</th>
+                                            <td class="border-top-0">Apple</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Item Height</th>
+                                            <td>18 Millimeters</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Item Width</th>
+                                            <td>31.4 Centimeters</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Screen Size</th>
+                                            <td>13 Inches</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Item Weight</th>
+                                            <td>1.6 Kg</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Product Dimensions</th>
+                                            <td>21.9 x 31.4 x 1.8 cm</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Item model number</th>
+                                            <td>MF841HN/A</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Processor Brand</th>
+                                            <td>Intel</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Processor Type</th>
+                                            <td>Core i5</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Processor Speed</th>
+                                            <td>2.9 GHz</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">RAM Size</th>
+                                            <td>8 GB</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Hard Drive Size</th>
+                                            <td>512 GB</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Hard Disk Technology</th>
+                                            <td>Solid State Drive</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Graphics Coprocessor</th>
+                                            <td>Intel Integrated Graphics</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Graphics Card Description</th>
+                                            <td>Integrated Graphics Card</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Hardware Platform</th>
+                                            <td>Mac</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Operating System</th>
+                                            <td>Mac OS</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="px-4 px-xl-5">Average Battery Life (in hours)</th>
+                                            <td>9</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                  
+                </div>
+            </div>
+            <!-- End Tab Content -->
+        </div>
+        <!-- End Single Product Tab -->
+
+        <!-- Related products -->
+        <div class="mb-6">
+            <div class="d-flex justify-content-between align-items-center border-bottom border-color-1 flex-lg-nowrap flex-wrap mb-4">
+                <h3 class="section-title mb-0 pb-2 font-size-22">Related products</h3>
+            </div>
+            <ul class="row list-unstyled products-group no-gutters">
+                {% for product in related_products %}
+                    <li class="col-6 col-md-3 col-xl-2gdot4-only col-wd-2 product-item">
+                        <div class="product-item__outer h-100">
+                            <div class="product-item__inner px-xl-4 p-3">
+                                <div class="product-item__body pb-xl-2">
+                                    <div class="mb-2"><a href="{% url 'store:shop' %}?category={{product.category.slug}}" class="font-size-12 text-gray-5">{{product.category.name}}</a></div>
+                                    <h5 class="mb-1 product-item__title"><a href="{{product.get_absolute_url}}" class="text-blue font-weight-bold">{{product.title}}</a></h5>
+                                    <div class="mb-2">
+                                        <a href="{{product.get_absolute_url}}" class="d-block text-center"><img class="img-fluid" src="{{product.product_images.first.image.url}}" alt="{{product.title}}"></a>
+                                    </div>
+                                    <div class="flex-center-between mb-1">
+                                        {% if product.discount_price %}
+                                            <div class="prodcut-price d-flex align-items-center flex-wrap position-relative">
+                                                <ins class="font-size-20 text-red text-decoration-none mr-2">${{product.discount_price}}</ins>
+                                                <del class="font-size-12 tex-gray-6 position-absolute bottom-100">${{product.price}}</del>
+                                            </div>
+                                        {% else %}
+                                            <div class="prodcut-price">
+                                                <div class="text-gray-100">${{product.price}}</div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="d-none d-xl-block prodcut-add-cart">
+                                            <a href="{{product.get_absolute_url}}" class="btn-add-cart btn-primary transition-3d-hover"><i class="ec ec-add-to-cart"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-item__footer">
+                                    <div class="border-top pt-2 flex-center-between flex-wrap">
+                                        {% comment %} <a href="../shop/compare.html" class="text-gray-6 font-size-13"><i class="ec ec-compare mr-1 font-size-15"></i> Compare</a> {% endcomment %}
+                                        <a href="../shop/wishlist.html" class="text-gray-6 font-size-13"><i class="ec ec-favorites mr-1 font-size-15"></i> Wishlist</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+          
+            </ul>
+        </div>
+        <!-- End Related products -->
+
+       
+    </div>
+</main>
+
+{% endblock %}
+
+{% block extra_body %}
+ <!-- JS Plugins Init. -->
+   <!-- JS Electro -->
+   <script src="{% static 'js/components/hs.quantity-counter.js' %}"></script>
+   <script src="{% static 'js/components/hs.scroll-nav.js' %}"></script>
+
+ <script>
+    $('#form').submit(function(e) {
+        // Get all the forms elements and their values in one step
+        e.preventDefault();
+        var qty = $("#product_qty").val();
+        var inputs = $('#form :input');
+        var select = $('#form :input :selected');
+        var radio = $('#form :input[type="radio"]:checked');
+
+
+        
+        var values = {};
+
+        $(select).each(function() {
+            if($(this).attr('name')) {
+                values[$(this).attr('name')] = $(this).val();
+            }
+        });
+        $(radio).each(function() {
+            if(this.name) {
+                values[this.name] = $(this).val();
+            }
+        });
+
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'store:add_to_cart' %}",
+            data: {
+                product_id: "{{product.id}}",
+                variation: JSON.stringify(values),
+                product_qty: qty,
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
+            beforeSend: function () {
+                
+                $("#add_to_cart").attr('disabled', true)
+            },
+          
+            success: function(json) {
+                $("#add_to_cart").attr('disabled', false)
+                $('#cart-count').text(json.qty)
+                $('#cart-count-large').text(json.qty)
+                $('#side-cart-total-price').text("$"+json.total_price)
+                $('#side-cart-total-price-large').text("$"+json.total_price)
+                if(json.added_product){
+                    var variation = JSON.stringify(json.added_product.variation)
+                    let price = json.added_product.product.discount_price ? json.added_product.product.discount_price : json.added_product.product.price
+                    var product = $(
+                    `
+                    <li class="border-bottom pb-3 mb-3">
+                        <div class="">
+                            <ul class="list-unstyled row mx-n2">
+                                <li class="px-2 col-auto">
+                                    <img class="img-fluid"
+                                        width="48"
+                                        src="{{product.product_images.first.image.url}}"
+                                        alt="{{product.title}}">
+                                </li>
+                                <li class="px-2 col">
+                                    <h5 class="text-blue font-size-14 font-weight-bold">
+                                        {{product.title }}
+                                    </h5>
+                                    <span class="font-size-14">${json.added_product.qty_per_variation} × ${price}</span>
+                                </li>
+                                <li class="px-2 col-auto">
+                                    <a product-id="${json.added_product.product.id}" variation='${variation}' id='remove-side-cart' href="#" class="text-gray-90"><i
+                                            class="ec ec-close-remove"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    `)
+
+                    $('#side-cart-ul').append(product)
+                }
+            }, 
+            error: function(xhr,errmsg,erro ){
+                $("#add_to_cart").attr('disabled', false)
+                const availability = $('#availability')
+                availability.html(` 
+                    <div class="alert alert-danger w-100 alert-dismissible fade show"
+                    role="alert">
+                        <strong>${xhr.responseJSON.errorMsg}.</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `)
+            },
+          
+            complete: function(){
+                
+            }
+          })
+     
+    });
+    $(document).on('ready', function () {
+
+        // initialization of HSScrollNav component
+        $.HSCore.components.HSScrollNav.init($('.js-scroll-nav'), {
+          duration: 700
+        });
+
+        // initialization of quantity counter
+        $.HSCore.components.HSQantityCounter.init('.js-quantity');
+
+      
+    });
+</script>
+   
+         
+{% endblock %}
+
+{% comment %} 
+$('#add_to_cart').removeClass('disabled')
+$('#add_to_cart').addClass('added-to-cart')
+$('#cart-count').text(json.qty)
+$('#side-cart-total-price').text(json.total_price)
+var variation = JSON.stringify(json.added_product.variation)
+var product = $(
+  `
+<div class="product" id="product-${json.added_product.product.id}">
+  <div class="product-details">
+      <h4 class="product-title" vv='new-add-${json.added_product.product.id}'>
+          <a href="{{product.get_absolute_url}}">${json.added_product.product.title}</a> <br />
+   
+      </h4>
+
+      <span class="cart-product-info">
+          <span class="cart-product-qty">${json.added_product.qty_per_variation}</span> × ${json.added_product.variation.total_with_variation}
+      </span>
+  </div>
+
+  <figure class="product-image-container">
+      <a href="{{product.get_absolute_url}}" class="product-image">
+          <img src="{{product.product_images.first.image.url}}" alt="product" width="80" height="80">
+      </a>
+
+      <a href='#' product-id="${json.added_product.product.id}" variation='${variation}' id='remove-side-cart'  class="btn-remove" title="Remove Product"><span>×</span></a>
+  </figure>
+</div>
+`)
+
+$('.dropdown-cart-products').append(product) {% endcomment %}

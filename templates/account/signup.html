@@ -1,0 +1,130 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+
+<main id="content" role="main">
+  <!-- breadcrumb -->
+  <div class="bg-gray-13 bg-md-transparent">
+      <div class="container">
+          <!-- breadcrumb -->
+          <div class="my-md-3">
+              <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble">
+                      <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a
+                              href="../home/index.html">Home</a></li>
+                      <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1 active" aria-current="page">My
+                          Account</li>
+                  </ol>
+              </nav>
+          </div>
+          <!-- End breadcrumb -->
+      </div>
+  </div>
+  <!-- End breadcrumb -->
+
+  <div class="container">
+      <div class="mb-4">
+          <h1 class="text-center">{% trans "Sign Up" %}</h1>
+      </div>
+      <div class="my-4 my-xl-8">
+          <div class="row">
+ 
+              <div class="col-md-6 m-auto">
+                  <!-- Title -->
+                  <div class="border-bottom border-color-1 mb-6">
+                      <h3 class="d-inline-block section-title mb-0 pb-2 font-size-26">Register</h3>
+                  </div>
+                
+                  <!-- Form Group -->
+                  <form method="post" action="{% url 'account_signup' %}" class="js-validate" novalidate="novalidate">
+                    {% csrf_token %}
+                    {% if redirect_field_value %}
+                      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                      <div class="js-form-message form-group mb-5">
+                          <label class="form-label" for="RegisterSrEmailExample3">Email address
+                              <span class="text-danger">*</span>
+                          </label>
+                          <input type="email" class="form-control" name="email" id="RegisterSrEmailExample3"
+                              placeholder="Email address" aria-label="Email address" required
+                              data-msg="Please enter a valid email address." data-error-class="u-has-error"
+                              data-success-class="u-has-success">
+                            <p class="text-danger small errorlist">{{form.email.errors}}</p>
+                      </div>
+                      <div class="js-form-message form-group mb-5">
+                        <label class="form-label" for="RegisterSFirstNameExample3">First Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="first_name" id="RegisterSFirstNameExample3"
+                            placeholder="First Name" aria-label="First Name" required
+                            data-msg="Please enter a valid First Name." data-error-class="u-has-error"
+                            data-success-class="u-has-success">
+                            <p class="text-danger small">{{form.first_name.errors}}</p>
+
+                      </div>
+                      <div class="js-form-message form-group mb-5">
+                        <label class="form-label" for="RegisterSLastNameExample3">Last Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="last_name" id="RegisterSLastNameExample3"
+                            placeholder="Last Name" aria-label="Last Name" required
+                            data-msg="Please enter a valid Last Name." data-error-class="u-has-error"
+                            data-success-class="u-has-success">
+                            <p class="text-danger small">{{form.last_name.errors}}</p>
+
+                      </div>
+                      <div class="js-form-message form-group mb-5">
+                        <label class="form-label" for="RegisterSphone_numberExample3">Phone Number
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="username" id="RegisterSphone_numberExample3"
+                            placeholder="Phone Number" aria-label="Phone Number" required
+                            data-msg="Please enter a valid Phone Number." data-error-class="u-has-error"
+                            data-success-class="u-has-success">
+                            <p class="text-danger small">{{form.username.errors}}</p>
+
+                      </div>
+                      <div class="js-form-message form-group mb-5">
+                        <label class="form-label" for="RegisterPassword1">Password
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="password" class="form-control" name="password1" id="RegisterPassword1"
+                            placeholder="Password" aria-label="Password1" required
+                            data-msg="Please enter a valid Password." data-error-class="u-has-error"
+                            data-success-class="u-has-success">
+                            <p class="text-danger small">{{form.password1.errors}}</p>
+
+                      </div>
+                      <div class="js-form-message form-group mb-5">
+                        <label class="form-label" for="RegisterPassword2">Re-Password
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="password" class="form-control" name="password2" id="RegisterPassword2"
+                            placeholder="Re-Password" aria-label="Password2" required
+                            data-msg="Please enter a valid Re-Password." data-error-class="u-has-error"
+                            data-success-class="u-has-success">
+                            <p class="text-danger small">{{form.password2.errors}}</p>
+
+                      </div>
+                      <!-- End Form Group -->
+                      <!-- Button -->
+                      <div class="mb-6">
+                          <div class="mb-3">
+                              <button type="submit" class="btn btn-primary-dark-w px-5">Register</button>
+                          </div>
+                      </div>
+                      <!-- End Button -->
+                  </form>
+                  <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+         
+                  </ul>
+              </div>
+          </div>
+      </div>
+  </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+   {% block head_title %}{% endblock %}
+    {% block extra_head %}
+    <link rel="stylesheet" href="{% static 'vendor/ion-rangeslider/css/ion.rangeSlider.css' %}">
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}   
+    {% if messages %}
+      <div class="django-messages">
+          <ul class="messages-wrapper">
+              {% for message in messages %}
+              <div class="alert {% if message.tags == 'error' %} alert-danger {% else %} alert-{{message.tags}} {%endif%} alert-dismissible fade show"
+                  role="alert">
+                  <strong>{{message}}.</strong>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              {% endfor %}
+          </ul>
+      </div>
+    {% endif %}
+
+
+    {% block content %} {% endblock %} {% endblock %} 
+    {% block extra_body %} 
+    <script src="{% static 'vendor/ion-rangeslider/js/ion.rangeSlider.min.js' %}"></script>
+    <script src="{% static 'js/components/hs.scroll-nav.js' %}"></script>
+    <script src="{% static 'js/components/hs.range-slider.js' %}"></script>
+    {% endblock %}
+  </body>
+</html>
